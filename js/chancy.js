@@ -277,7 +277,7 @@ function populateStack(board, stack){
       </div>\
       <div id="main-wrapper" class="col-md-10 pull-right">\
         <div id="main">\
-          <div class="page-header">\
+          <div class="page-content">\
             <p class="alert alert-success">Select the board size from the right to view solutions.</p>\
           </div>\
         </div>\
@@ -385,7 +385,8 @@ function displaySoln(index){
       }, false);
     }
     else{
-
+      var layout = '<div class="page-content"><p class="alert alert-danger">No solutions found.</p></div></div>';
+      $('#main').html(layout);
     }
   // end modified code from CMSC 150 and CMSC 191 projects
 
@@ -492,8 +493,32 @@ function appendBoard(board, initial=false, index='', n=''){
 }
 
 function showHome(){
-  var home = '<div class="page-header"> <h3>N-Chancellors Problem: A modification on the N-Queens problem</h3> </div> <div class="page-content"> <p>de Guzman, Adriel Dane</p> <p>Quizon, Pia Carmela</p> <p>CMSC 142 C-4L 2nd sem 2016-2017</p> </div>';
-  $('#main').html(home);
+  var home = '<div id="main-wrapper" class="col-md-12">\
+      <div id="main">\
+        <div class="page-header">\
+          <h3>N-Chancellors Problem: A modification on the N-Queens problem</h3>\
+        </div>\
+        <div class="page-content">\
+          <p>de Guzman, Adriell Dane</p>\
+          <p>Quizon, Pia Carmela</p>\
+          <br/>\
+          <p>CMSC 142 C-4L 2nd sem 2016-2017</p>\
+        </div>\
+        <hr>\
+        <pre>Expected format for input files:<br/><br/>2&#9;&#9;&#9;// number of puzzles<br>'+
+          '3&#9;&#9;&#9;// size of ith board<br>'+
+          '0 0 0<br>'+
+          '0 0 0<br>'+
+          '0 0 0<br>'+
+          '4&#9;&#9;&#9;// size of ith board<br>'+
+          '0 0 0 0<br>'+
+          '0 0 0 0<br>'+
+          '0 0 0 0<br>'+
+          '0 0 0 0<br>'+
+        '</pre>\
+      </div>\
+    </div>';
+  $('#wrapper').html(home);
 }
 
 function uploadFile(){
