@@ -1,0 +1,163 @@
+/* begin bootply styles from http://www.bootply.com/87811 */
+
+body {
+  padding-top: 50px;
+  overflow: hidden;
+}
+
+#wrapper {
+  min-height: 100%;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  top: 0px;
+  left: 0;
+  display: inline-block;
+}
+
+#main-wrapper {
+  height: 100%;
+  overflow-y: auto;
+  padding: 50px 0 0px 0;
+}
+
+#main {
+  position: relative;
+  height: 100%;
+  /*height: 75%;*/
+  overflow-y: auto;
+  /*padding: 0 15px;*/
+  padding: 15px;
+}
+
+#sidebar-wrapper {
+  height: 100%;
+  padding: 50px 0 0px 0;
+  position: fixed;
+  border-right: 1px solid gray;
+}
+
+#sidebar {
+  position: relative;
+  height: 100%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+#sidebar .list-group-item {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+}
+
+#sidebar .list-group-item-heading {
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    border-top: 0;
+}
+
+@media (max-width: 992px) {
+  body {
+    padding-top: 0px;
+  }
+}
+
+@media (min-width: 992px) {
+  #main-wrapper {
+    float:right;
+  }
+}
+
+@media (max-width: 992px) {
+  #main-wrapper {
+    padding-top: 0px;
+  }
+}
+
+@media (max-width: 992px) {
+  #sidebar-wrapper {
+    position: static;
+    height:auto;
+    max-height: 300px;
+    border-right:0;
+  }
+}
+
+.footer {
+  bottom:0;
+  position:fixed;
+  padding:10px;
+  height: 25%;
+  background-color: #f8f8f8;
+  border-top-color: #e7e7e7;
+  border-width: 1px;
+  border-top-style: solid;
+  z-index: 1000;
+}
+
+/* end bootply styles from http://www.bootply.com/87811 */
+
+textarea,
+input[type="button"] {
+  width: 100%;
+  height: 100%;
+}
+
+form,
+.container,
+.footer .col-md-10,
+.footer .col-md-1  {
+  padding: 0;
+  height: 100%;
+}
+
+#tableView {
+  padding-top: 1.25em;
+  padding-left: 0.25em;
+}
+
+#sidebar ul {
+  height: 100%;
+  padding: 0;
+}
+
+#fileInput {
+  display: none;
+}
+
+.table {
+  width: initial;
+  margin-left: auto;
+  margin-right: auto;
+  border-width: thick;
+  text-align: center;
+}
+
+.table-bordered>tbody>tr>td,
+.table-bordered>tbody>tr>th,
+.table-bordered>tfoot>tr>td,
+.table-bordered>tfoot>tr>th,
+.table-bordered>thead>tr>td,
+.table-bordered>thead>tr>th {
+  border-width: medium;
+}
+
+.soln {
+  display: inline-block;
+  padding: 10px;
+}
+
+.ini {
+  display: inherit;
+}
+
+.dl {
+  display: inline-block;
+}
+
+ul.nav.list-group {
+  padding: 0;
+  margin: 0;
+}
