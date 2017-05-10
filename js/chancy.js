@@ -2,7 +2,7 @@
 
 // begin modified code from CMSC 191 project
   var reviews = [];
-  var perPage = -1;
+  var perPage = 50;
   var curIndex = -1;
 
   function changeItems(pageNumber, event){
@@ -241,6 +241,26 @@ function populateStack(board, stack){
   return stack;
 }
 
+function hasConflict(opts){
+  var row,
+      col,
+      stack = opts.fixed,
+      board = opts.arr;
+
+  for(col=0; col<stack.length; col++) {
+    row = stack[col];
+
+    if(row < 0) continue;
+
+    if(!isSafe(board, row, col)){
+      return true;
+    }
+  }
+
+  return false;
+
+}
+
 // begin modified code from CMSC 191 project mixed with CMSC 142 N Queens exercise
   // CSV upload : https://mounirmesselmeni.github.io/2012/11/20/reading-csv-file-with-javascript-and-html5-file-api/
   function handleFiles(files) {
@@ -337,8 +357,12 @@ function populateStack(board, stack){
       puzzles.push(puzzle);
       solutions.push([]);
 
-      // solve here
-      solve(i, opts);
+      //check conflict of initial chancy
+      if(!hasConflict(opts)){
+        // solve here
+        solve(i, opts);
+      }
+
 
       addSidebarItem(i, size);
     }
@@ -367,7 +391,6 @@ function displaySoln(index){
   // begin modified code from CMSC 150 and CMSC 191 projects
     // for pagination
     reviews = solutions[index];
-    perPage = 100;
 
     if(reviews.length){
       document.getElementById("resultHead").innerHTML = 'Total number of solutions: '+reviews.length+'</div>'
@@ -505,17 +528,15 @@ function showHome(){
           <p>CMSC 142 C-4L 2nd sem 2016-2017</p>\
         </div>\
         <hr>\
-        <pre>Expected format for input files:<br/><br/>2&#9;&#9;&#9;// number of puzzles<br>'+
-          '3&#9;&#9;&#9;// size of ith board<br>'+
-          '0 0 0<br>'+
-          '0 0 0<br>'+
-          '0 0 0<br>'+
-          '4&#9;&#9;&#9;// size of ith board<br>'+
-          '0 0 0 0<br>'+
-          '0 0 0 0<br>'+
-          '0 0 0 0<br>'+
-          '0 0 0 0<br>'+
-        '</pre>\
+        <div class="row">\
+          <div class="col-md-6">\
+            <pre>Expected format for input files:<br/><br/>2&#9;&#9;&#9;// number of puzzles<br/>3&#9;&#9;&#9;// size of ith board<br/>0 0 0&#9;&#9;// initial position of chancellors denoted by 1<br/>0 0 0<br/>0 0 0<br/>4&#9;&#9;&#9;// size of ith board<br/>0 0 0 0&#9;&#9;// initial position of chancellors denoted by 1<br/>0 0 0 0<br/>0 0 0 0<br/>0 0 0 0\
+            </pre>\
+          </div><div class="col-md-6">\
+            <pre>Sample format of downloadable solution given N=3 :<br/>Filename: solution-n-3.txt<br/>Contents:<br/>Solution 1<br/>1 0 0<br/>0 1 0<br/>0 0 1<br/><br/>Solution 2<br/>0 0 1<br/>0 1 0<br/>1 0 0\
+            </pre>\
+          </div>\
+        </div>\
       </div>\
     </div>';
   $('#wrapper').html(home);
