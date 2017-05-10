@@ -17,8 +17,8 @@
   }
 // end modified code from CMSC 191 project
 
-var N, TOS,
-    tableToImport = '',
+var N,
+    TOS,
     puzzles = [],
     solutions = [];
 
@@ -257,6 +257,9 @@ function hasConflict(opts){
   // CSV upload : https://mounirmesselmeni.github.io/2012/11/20/reading-csv-file-with-javascript-and-html5-file-api/
   function handleFiles(files) {
     if (window.FileReader) {  // Check for the various File API support.
+      reviews = [];
+      solutions = [];
+      puzzles = [];
       getAsText(files[0]);    // FileReader is supported.
       $('input[type="file"]').val(null);
     } else {
@@ -391,10 +394,22 @@ function displaySoln(index){
         link.href = makeTextFile(solnText);
         link.style.visibility = 'visible';
       }, false);
+
+      // setup pagination
+      $(function(){
+        $('.resultPagination').pagination({
+          items: reviews.length,
+          itemsOnPage: perPage,
+          cssStyle: 'light-theme',
+          onPageClick: changeItems
+        })
+      });
     }
     else {
       var layout = '<div class="page-content"><p class="alert alert-danger">No solutions found.</p></div></div>';
-      $('#main').html(layout);
+      $('.dl').remove();
+      $('.resultPagination').remove();
+      $('#main').append(layout);
     }
   // end modified code from CMSC 150 and CMSC 191 projects
 
@@ -402,18 +417,6 @@ function displaySoln(index){
   for(var i=0; i<perPage && i<reviews.length; i++){
     appendBoard(solutions[index][i], false, (i+1), index);
   }
-
-  // begin modified code from CMSC 191 project
-    // setup pagination
-    $(function(){
-      $('.resultPagination').pagination({
-        items: reviews.length,
-        itemsOnPage: perPage,
-        cssStyle: 'light-theme',
-        onPageClick: changeItems
-      })
-    });
-  // end modified code from CMSC 191 project
 
   $("tr:nth-child(even) td:nth-child(even).chancy, \
      tr:nth-child(even) td:nth-child(odd).chancy, \
@@ -542,6 +545,5 @@ function showHome(){
 }
 
 function uploadFile(){
-  $("#txtFileInput").prop('disabled', false);
   $('#txtFileInput').trigger('click');
 }
