@@ -14,7 +14,6 @@
     for(var i=(pageNumber-1)*perPage, j=0; i<reviews.length && j<perPage; i++, j++){
       appendBoard(solutions[curIndex][i], false, (i+1), curIndex);
     }
-
   }
 // end modified code from CMSC 191 project
 
@@ -23,10 +22,11 @@ var N, TOS,
     puzzles = [],
     solutions = [];
 
-function isSafe(arr, row, col){
+function isSafe(arr, row, col, preliminary=false){
   var i, j;
 
-  if(col > TOS || TOS >= N || col>= N || row>=N )
+  if(!preliminary &&
+     (col > TOS || TOS >= N || col>= N || row>=N))
     return false;
 
   // Check row
@@ -173,7 +173,7 @@ function solve(index, data){
         arr[ stack[TOS] ][ TOS++ ] = 1;
         queens++;
       }
-      else{
+      else {
         if(i<0 || j<0 || TOS<0 || i>N || j>N || TOS>N || (i>N && j==0)){
           return;
         }
@@ -189,7 +189,6 @@ function solve(index, data){
         }
       }
     }
-
   }
 }
 
@@ -224,9 +223,9 @@ function populateStack(board, stack){
 
   for(var i=0; i<board.length; i++){
     for(var j=0; j<board[i].length; j++){
-      if(board[i][j])
+      if(board[i][j]){
         stack[j] = i;
-
+      }
     }
   }
 
@@ -242,15 +241,16 @@ function hasConflict(opts){
   for(col=0; col<stack.length; col++) {
     row = stack[col];
 
-    if(row < 0) continue;
+    if(row < 0){
+      continue;
+    }
 
-    if(!isSafe(board, row, col)){
+    if(!isSafe(board, row, col, true)){
       return true;
     }
   }
 
   return false;
-
 }
 
 // begin modified code from CMSC 191 project mixed with CMSC 142 N Queens exercise
@@ -258,6 +258,7 @@ function hasConflict(opts){
   function handleFiles(files) {
     if (window.FileReader) {  // Check for the various File API support.
       getAsText(files[0]);    // FileReader is supported.
+      $('input[type="file"]').val(null);
     } else {
       alert('FileReader are not supported in this browser.');
     }
@@ -295,7 +296,6 @@ function hasConflict(opts){
         </div>\
       </div>');
 
-
     csv = csv.split('\n');
 
     var size = -1;
@@ -330,7 +330,7 @@ function hasConflict(opts){
             opts.fixed[index] = j;
             opts.hasInitialChancys = true;
           }
-          else{
+          else {
             opts.stack[index] = -1;
             opts.fixed[index] = false;
           }
@@ -341,20 +341,16 @@ function hasConflict(opts){
         puzzle.push(line);
       }
 
-      opts.arr = puzzle;
-
+      opts.arr = boardDeepCopy(puzzle);
       opts.stack = populateStack(puzzle, opts.stack);
       opts.fixed = arrDeepCopy(opts.stack)
 
       puzzles.push(puzzle);
       solutions.push([]);
 
-      //check conflict of initial chancy
-      if(!hasConflict(opts)){
-        // solve here
-        solve(i, opts);
+      if(!hasConflict(opts)){   // check for conflict of initial chancy
+        solve(i, opts);         // solve here
       }
-
 
       addSidebarItem(i, size);
     }
@@ -373,7 +369,6 @@ function addSidebarItem(index, n){
   var sidebarItem = '<li><a class="list-group-item" href="#" onclick="displaySoln('+index+')">N = '+n+'</a></li>';
 
   $('#sidebarItems').append(sidebarItem);
-
 }
 
 function displaySoln(index){
@@ -397,17 +392,11 @@ function displaySoln(index){
         link.style.visibility = 'visible';
       }, false);
     }
-    else{
+    else {
       var layout = '<div class="page-content"><p class="alert alert-danger">No solutions found.</p></div></div>';
       $('#main').html(layout);
     }
   // end modified code from CMSC 150 and CMSC 191 projects
-
-
-  // for(var i=0; solutions[index] && i<solutions[index].length; i++){
-  //   // printBoard(solutions[index][i]);
-  //   appendBoard(solutions[index][i], false, (i+1));
-  // }
 
   // display results
   for(var i=0; i<perPage && i<reviews.length; i++){
@@ -486,7 +475,6 @@ function appendBoard(board, initial=false, index='', n=''){
 
   var caption = 'Solution '+index,
       table = '',
-      cContent = '',
       cClass = '',
       tClass = 'soln';
 
@@ -501,12 +489,8 @@ function appendBoard(board, initial=false, index='', n=''){
   for(var i=0; i<board.length; i++){
     table+= '<tr>';
     for(var j=0; j<board[i].length; j++){
-      // cContent = board[i][j] ? 'C' : '&#9;';
-      // table+= '<td>'+cContent+'</td>';
-
       cClass = board[i][j] ? 'chancy' : '';
       table+= '<td class="'+cClass+'">&#9;</td>';
-      // table+= '<td class="'+cClass+'">'+cContent+'</td>';
     }
     table+= '</tr>';
   }
@@ -525,10 +509,9 @@ function appendBoard(board, initial=false, index='', n=''){
       $('#main').append(layout);
     // end modified code from CMSC 191 project
   }
-  else{
+  else {
     $('#result').append(table);
   }
-
 }
 
 function showHome(){
