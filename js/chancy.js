@@ -6,7 +6,7 @@
   var curIndex = -1;
 
   function changeItems(pageNumber, event){
-    document.getElementById("resultHead").innerHTML = '<div class="page-header"><h3>Reviews</h3>Total: '+reviews.length+'</div>'
+    document.getElementById("resultHead").innerHTML = 'Total number of solutions: '+reviews.length+'</div>'
 
     document.getElementById("result").innerHTML = '';
 
@@ -14,6 +14,8 @@
     for(var i=(pageNumber-1)*perPage, j=0; i<reviews.length && j<perPage; i++, j++){
       appendBoard(solutions[curIndex][i], false, (i+1), curIndex);
     }
+
+    setTokens();
   }
 // end modified code from CMSC 191 project
 
@@ -418,6 +420,11 @@ function displaySoln(index){
     appendBoard(solutions[index][i], false, (i+1), index);
   }
 
+  setTokens();
+
+}
+
+function setTokens(){
   $("tr:nth-child(even) td:nth-child(even).chancy, \
      tr:nth-child(even) td:nth-child(odd).chancy, \
      tr:nth-child(odd) td:nth-child(odd).chancy, \
@@ -435,7 +442,6 @@ function displaySoln(index){
      tr:nth-child(odd) td:nth-child(even).chancy").css({
     'background-image': 'url(./img/chancy-black.jpg)',
   });
-
 }
 
 // begin modified code from CMSC 150 project
