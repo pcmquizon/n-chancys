@@ -425,6 +425,25 @@ function displaySoln(index){
       })
     });
   // end modified code from CMSC 191 project
+
+  $("tr:nth-child(even) td:nth-child(even).chancy, \
+     tr:nth-child(even) td:nth-child(odd).chancy, \
+     tr:nth-child(odd) td:nth-child(odd).chancy, \
+     tr:nth-child(odd) td:nth-child(even).chancy").css({
+    'background-color': 'transparent',
+    'background-size': 'contain'
+  });
+
+  $("tr:nth-child(even) td:nth-child(even).chancy, \
+     tr:nth-child(odd) td:nth-child(odd).chancy").css({
+    'background-image': 'url(./img/chancy-white.png)',
+  });
+
+  $("tr:nth-child(even) td:nth-child(odd).chancy, \
+     tr:nth-child(odd) td:nth-child(even).chancy").css({
+    'background-image': 'url(./img/chancy-black.jpg)',
+  });
+
 }
 
 // begin modified code from CMSC 150 project
@@ -468,6 +487,7 @@ function appendBoard(board, initial=false, index='', n=''){
   var caption = 'Solution '+index,
       table = '',
       cContent = '',
+      cClass = '',
       tClass = 'soln';
 
   if(initial){
@@ -481,9 +501,12 @@ function appendBoard(board, initial=false, index='', n=''){
   for(var i=0; i<board.length; i++){
     table+= '<tr>';
     for(var j=0; j<board[i].length; j++){
-      cContent = board[i][j] ? 'C' : '&#9;';
+      // cContent = board[i][j] ? 'C' : '&#9;';
+      // table+= '<td>'+cContent+'</td>';
 
-      table+= '<td>'+cContent+'</td>';
+      cClass = board[i][j] ? 'chancy' : '';
+      table+= '<td class="'+cClass+'">&#9;</td>';
+      // table+= '<td class="'+cClass+'">'+cContent+'</td>';
     }
     table+= '</tr>';
   }
