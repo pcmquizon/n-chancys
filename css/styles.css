@@ -131,9 +131,27 @@ form,
   width: initial;
   margin-left: auto;
   margin-right: auto;
-  border-width: thick;
+  border-width: medium;
   text-align: center;
+  /* begin modified from: http://cssdeck.com/labs/css-chess-board */
+    border-collapse: collapse;
+    border-color: black;
+    background: black;
+    color: white;
+  /* end modified from: http://cssdeck.com/labs/css-chess-board */
 }
+
+/* begin modified from: http://cssdeck.com/labs/css-chess-board */
+  tr:nth-child(odd) td:nth-child(even),
+  tr:nth-child(even) td:nth-child(odd) {
+    background: white;
+    color:black;
+  }
+
+  td {
+    width: 40px; height: 40px;
+  }
+/* end modified from: http://cssdeck.com/labs/css-chess-board */
 
 .table-bordered>tbody>tr>td,
 .table-bordered>tbody>tr>th,
@@ -141,7 +159,8 @@ form,
 .table-bordered>tfoot>tr>th,
 .table-bordered>thead>tr>td,
 .table-bordered>thead>tr>th {
-  border-width: medium;
+  border-width: thin;
+  border-color: black;
 }
 
 .soln {

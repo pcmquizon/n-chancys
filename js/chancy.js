@@ -136,7 +136,9 @@ function solve(index, data){
 
   TOS=0;
 
-  var i,j,
+  var i,
+      j,
+      temp,
       queens=0,
       soln=0,
       arr = [],
@@ -147,16 +149,6 @@ function solve(index, data){
   arr = data.arr;
   stack = arrDeepCopy(data.stack);
   fixed = arrDeepCopy(data.fixed);
-
-  // console.log('data');
-  // console.log(data);
-
-  // printBoard(arr);
-  // console.log(arr);
-  // console.log(stack);
-  // console.log(fixed);
-
-  var temp;
 
   for(j=0; j<=N; j++){
     for(i=0; i<=N; i++){
@@ -400,8 +392,6 @@ function displaySoln(index){
       create.addEventListener('click', function () {
         var solnText = getSolnText(index);
 
-        console.log(solnText);
-
         var link = document.getElementById('downloadlink-'+index);
         link.href = makeTextFile(solnText);
         link.style.visibility = 'visible';
@@ -475,9 +465,10 @@ function appendBoard(board, initial=false, index='', n=''){
 
   curIndex = n;
 
-  var caption = 'Solution '+index;
-  var tClass = 'soln';
-  var table = '';
+  var caption = 'Solution '+index,
+      table = '',
+      cContent = '',
+      tClass = 'soln';
 
   if(initial){
     caption = 'Initial configuration'
@@ -485,12 +476,14 @@ function appendBoard(board, initial=false, index='', n=''){
     table += '<div class="dl"><a class="btn btn-primary pull-right" download="solution-n-'+(n+1)+'.txt" id="downloadlink-'+n+'">Download solutions</a></div>'
   }
 
-  table += '<div class="'+tClass+'"><table class="table table-responsive table-bordered table-hover"><caption>'+caption+'</caption><tbody>';
+  table += '<div class="'+tClass+'"><table class="table table-responsive table-bordered"><caption>'+caption+'</caption><tbody>';
 
   for(var i=0; i<board.length; i++){
     table+= '<tr>';
     for(var j=0; j<board[i].length; j++){
-      table+= '<td>' + board[i][j] + '</td>';
+      cContent = board[i][j] ? 'C' : '&#9;';
+
+      table+= '<td>'+cContent+'</td>';
     }
     table+= '</tr>';
   }
