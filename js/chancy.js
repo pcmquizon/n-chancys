@@ -50,48 +50,48 @@ function isSafe(arr, row, col, preliminary=false){
 
   // n chancellors
   // check upper vertical L
-  if(row-2 >= 0 && row-2 <sizeN){
-    if(col-1 >= 0 && col-1 <sizeN){
+  if(row-2 >= 0 && row-2 < sizeN){
+    if(col-1 >= 0 && col-1 < sizeN){
       if(arr[row-2][col-1])
         return false;
     }
-    if(col+1 >= 0 && col+1 <sizeN){
+    if(col+1 >= 0 && col+1 < sizeN){
       if(arr[row-2][col+1])
         return false;
     }
   }
 
   // check lower vertical L
-  if(row+2 >= 0 && row+2 <sizeN){
-    if(col-1 >= 0 && col-1 <sizeN){
+  if(row+2 >= 0 && row+2 < sizeN){
+    if(col-1 >= 0 && col-1 < sizeN){
       if(arr[row+2][col-1])
         return false;
     }
-    if(col+1 >= 0 && col+1 <sizeN){
+    if(col+1 >= 0 && col+1 < sizeN){
       if(arr[row+2][col+1])
         return false;
     }
   }
 
   // check upper horizontal L
-  if(row-1 >= 0 && row-1 <sizeN){
-    if(col-2 >= 0 && col-2 <sizeN){
+  if(row-1 >= 0 && row-1 < sizeN){
+    if(col-2 >= 0 && col-2 < sizeN){
       if(arr[row-1][col-2])
         return false;
     }
-    if(col+2 >= 0 && col+2 <sizeN){
+    if(col+2 >= 0 && col+2 < sizeN){
       if(arr[row-1][col+2])
         return false;
     }
   }
 
   // check lower horizontal L
-  if(row+1 >= 0 && row+1 <sizeN){
-    if(col-2 >= 0 && col-2 <sizeN){
+  if(row+1 >= 0 && row+1 < sizeN){
+    if(col-2 >= 0 && col-2 < sizeN){
       if(arr[row+1][col-2])
         return false;
     }
-    if(col+2 >= 0 && col+2 <sizeN){
+    if(col+2 >= 0 && col+2 < sizeN){
       if(arr[row+1][col+2])
         return false;
     }
@@ -432,9 +432,6 @@ function displaySoln(index, interactive=false){
   for(var i=0; i<perPage && i<reviews.length; i++){
     appendBoard(solutions[index][i], false, (i+1), index);
   }
-
-  // setTokens();
-
 }
 
 function setTokens(){
@@ -450,7 +447,6 @@ function setTokens(){
      tr:nth-child(even) td:nth-child(odd).chancy, \
      tr:nth-child(odd) td:nth-child(odd).chancy, \
      tr:nth-child(odd) td:nth-child(even).chancy").css({
-    // 'background-color': 'transparent',
     'background-size': 'contain',
     'background-size': 'cover',
     'background-repeat': 'no-repeat',
@@ -515,7 +511,6 @@ function appendBoard(board, initial=false, index='', n=0, interactive=false){
     caption = 'Initial configuration'
     tClass = 'ini';
     if(interactive){
-      console.log(curIndex);
       table += '<div class="dl">\
       <a class="btn btn-primary" onclick="solveInteractive()">Solve</a>\
       <a class="btn btn-primary" download="solution-n-'+(sizeN)+'.txt" id="downloadlink-'+n+'">Download solutions</a>\
@@ -544,7 +539,6 @@ function appendBoard(board, initial=false, index='', n=0, interactive=false){
       interactiveMode();
       document.getElementById('nSize').value = sizeN;
       $('#main').append(table);
-      // $('#downloadlink-'+n).prop('disabled', true);
       $('#nSize').focus();
     }
     else {
@@ -598,11 +592,25 @@ function uploadFile(){
   $('#txtFileInput').trigger('click');
 }
 
+function isSolved(arr, stack){
+
+  for(var col=0; col<stack.length; col++){
+    var row = parseInt(stack[col], 10);
+
+    if(row < 0 ||
+       !isSafe(arr, row, col, true)){
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function addEmptyNBoard(){
   sizeN = parseInt(document.getElementById('nSize').value, 10);
 
   puzzles = [];
-  solutions = [];
+  solutions = [[]];
 
   playable.arr = initBoard(sizeN);
   playable.stack = initStack(sizeN);
@@ -610,12 +618,6 @@ function addEmptyNBoard(){
   playable.hasInitialChancys = false;
 
   appendBoard(playable.arr, true, '', 0, true);
-
-  // printBoard(playable.arr);
-
-
-  // console.log(cells);
-
   addCellListener();
 }
 
@@ -624,40 +626,39 @@ function addCellListener(){
 
   for(var i=0; i<cells.length; i++){
     selectedCellId = cells[i].id;
-    var idSplit = cells[i].id.split('-');
-    // console.log(id);
-    var row = idSplit[0];
-    var col = idSplit[1];
 
     cells[i].addEventListener('click', function (event) {
 
-      // var id='0-0';
-
       var idSplit = this.id.split('-');
-      var row = idSplit[0];
-      var col = idSplit[1];
+      var row = parseInt(idSplit[0], 10);
+      var col = parseInt(idSplit[1], 10);
+
+      if(!isSafe(playable.arr, row, col, true)){
+        alert('Selected cell is not safe.');
+        return;
+      }
 
       if(playable.arr[row][col]){
         playable.arr[row][col] = 0;
         playable.stack[col] = -1;
         playable.fixed[col] = -1;
         $('#'+this.id).removeClass('chancy');
-        console.log('clear');
         setTokens();
-        // console.log(1);
       }
       else{
         playable.arr[row][col] = 1;
         playable.stack[col] = row;
         playable.fixed[col] = row;
         $('#'+this.id).addClass('chancy');
-        console.log('put');
         setTokens();
-        // console.log(0);
       }
 
-      console.log(this);
-      printBoard(playable.arr);
+      if(isSolved(playable.arr, playable.stack)){
+        alert('You found a solution!');
+        puzzles = [boardDeepCopy(playable.arr)];
+        solutions[0].push(boardDeepCopy(playable.arr));
+        displaySoln(0, true);
+      }
 
     }, false);
   }
@@ -667,7 +668,7 @@ function solveInteractive(){
   sizeN = parseInt(document.getElementById('nSize').value, 10);
 
   puzzles = [];
-  solutions = [];
+  solutions = [[]];
 
   var opts = {
     arr: boardDeepCopy(playable.arr),
@@ -675,12 +676,8 @@ function solveInteractive(){
     fixed: arrDeepCopy(playable.fixed),
     hasInitialChancys: false
   };
-  // opts.arr = boardDeepCopy(playable.arr);
-  console.log(opts.arr);
   opts.stack = populateStack(playable.arr, playable.stack);
-  console.log(opts.stack);
   opts.fixed = arrDeepCopy(opts.stack);
-  console.log(opts.fixed);
 
   for(var i=0; !opts.hasInitialChancys && i<playable.arr.length; i++){
     for(var j=0; !opts.hasInitialChancys && j<playable.arr[i].length; j++){
