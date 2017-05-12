@@ -15,12 +15,19 @@
       appendBoard(solutions[curIndex][i], false, (i+1), curIndex);
     }
 
-    setTokens();
+    // setTokens();
   }
 // end modified code from CMSC 191 project
 
-var N,
+var sizeN,
     TOS,
+    selectedCellId = '',
+    playable = {
+      arr: [],
+      fixed: [],
+      stack: [],
+      hasInitialChancys: false
+    },
     puzzles = [],
     solutions = [];
 
@@ -28,7 +35,7 @@ function isSafe(arr, row, col, preliminary=false){
   var i, j;
 
   if(!preliminary &&
-     (col > TOS || TOS >= N || col>= N || row>=N))
+     (col > TOS || TOS >= sizeN || col>= sizeN || row>=sizeN))
     return false;
 
   // Check row
@@ -43,48 +50,48 @@ function isSafe(arr, row, col, preliminary=false){
 
   // n chancellors
   // check upper vertical L
-  if(row-2 >= 0 && row-2 <N){
-    if(col-1 >= 0 && col-1 <N){
+  if(row-2 >= 0 && row-2 <sizeN){
+    if(col-1 >= 0 && col-1 <sizeN){
       if(arr[row-2][col-1])
         return false;
     }
-    if(col+1 >= 0 && col+1 <N){
+    if(col+1 >= 0 && col+1 <sizeN){
       if(arr[row-2][col+1])
         return false;
     }
   }
 
   // check lower vertical L
-  if(row+2 >= 0 && row+2 <N){
-    if(col-1 >= 0 && col-1 <N){
+  if(row+2 >= 0 && row+2 <sizeN){
+    if(col-1 >= 0 && col-1 <sizeN){
       if(arr[row+2][col-1])
         return false;
     }
-    if(col+1 >= 0 && col+1 <N){
+    if(col+1 >= 0 && col+1 <sizeN){
       if(arr[row+2][col+1])
         return false;
     }
   }
 
   // check upper horizontal L
-  if(row-1 >= 0 && row-1 <N){
-    if(col-2 >= 0 && col-2 <N){
+  if(row-1 >= 0 && row-1 <sizeN){
+    if(col-2 >= 0 && col-2 <sizeN){
       if(arr[row-1][col-2])
         return false;
     }
-    if(col+2 >= 0 && col+2 <N){
+    if(col+2 >= 0 && col+2 <sizeN){
       if(arr[row-1][col+2])
         return false;
     }
   }
 
   // check lower horizontal L
-  if(row+1 >= 0 && row+1 <N){
-    if(col-2 >= 0 && col-2 <N){
+  if(row+1 >= 0 && row+1 <sizeN){
+    if(col-2 >= 0 && col-2 <sizeN){
       if(arr[row+1][col-2])
         return false;
     }
-    if(col+2 >= 0 && col+2 <N){
+    if(col+2 >= 0 && col+2 <sizeN){
       if(arr[row+1][col+2])
         return false;
     }
@@ -97,7 +104,7 @@ function isSafe(arr, row, col, preliminary=false){
   //     return false;
 
   // // Check slash
-  // for (i=row, j=col; j>=0 && i<N; i++, j--)
+  // for (i=row, j=col; j>=0 && i<sizeN; i++, j--)
   //   if (arr[i][j])
   //     return false;
 
@@ -152,9 +159,9 @@ function solve(index, data){
   stack = arrDeepCopy(data.stack);
   fixed = arrDeepCopy(data.fixed);
 
-  for(j=0; j<=N; j++){
-    for(i=0; i<=N; i++){
-      if(queens == N){
+  for(j=0; j<=sizeN; j++){
+    for(i=0; i<=sizeN; i++){
+      if(queens == sizeN){
         temp = boardDeepCopy(arr);
 
         if( !hasInitialChancys ||
@@ -176,10 +183,10 @@ function solve(index, data){
         queens++;
       }
       else {
-        if(i<0 || j<0 || TOS<0 || i>N || j>N || TOS>N || (i>N && j==0)){
+        if(i<0 || j<0 || TOS<0 || i>sizeN || j>sizeN || TOS>sizeN || (i>sizeN && j==0)){
           return;
         }
-        if( j > TOS || (i==N-1 && j==N-1 && stack[TOS]==-1) ){
+        if( j > TOS || (i==sizeN-1 && j==sizeN-1 && stack[TOS]==-1) ){
           queens--;
           j = --TOS;
 
@@ -316,11 +323,11 @@ function hasConflict(opts){
 
     for(var i=0; i<puzzleCount; i++){
       size = parseInt(csv.shift(), 10);
-      N = size;
+      sizeN = size;
 
-      opts.arr = initBoard(N);
-      opts.stack = initStack(N);
-      opts.fixed = initStack(N);
+      opts.arr = initBoard(sizeN);
+      opts.stack = initStack(sizeN);
+      opts.fixed = initStack(sizeN);
       opts.hasInitialChancys = false;
 
       puzzle = [];
@@ -376,9 +383,15 @@ function addSidebarItem(index, n){
   $('#sidebarItems').append(sidebarItem);
 }
 
-function displaySoln(index){
+function displaySoln(index, interactive=false){
 
-  appendBoard(puzzles[index], true, '', index);
+  if(interactive){
+    appendBoard(puzzles[index], true, '', index, true);
+    addCellListener();
+  }
+  else{
+   appendBoard(puzzles[index], true, '', index);
+  }
 
   // begin modified code from CMSC 150 and CMSC 191 projects
     // for pagination
@@ -420,17 +433,28 @@ function displaySoln(index){
     appendBoard(solutions[index][i], false, (i+1), index);
   }
 
-  setTokens();
+  // setTokens();
 
 }
 
 function setTokens(){
+  $("tr:nth-child(even) td:nth-child(even), \
+     tr:nth-child(even) td:nth-child(odd), \
+     tr:nth-child(odd) td:nth-child(odd), \
+     tr:nth-child(odd) td:nth-child(even)").css({
+    'background-image': '',
+    'background-size': 'contain'
+  });
+
   $("tr:nth-child(even) td:nth-child(even).chancy, \
      tr:nth-child(even) td:nth-child(odd).chancy, \
      tr:nth-child(odd) td:nth-child(odd).chancy, \
      tr:nth-child(odd) td:nth-child(even).chancy").css({
-    'background-color': 'transparent',
-    'background-size': 'contain'
+    // 'background-color': 'transparent',
+    'background-size': 'contain',
+    'background-size': 'cover',
+    'background-repeat': 'no-repeat',
+    'background-position': 'center center'
   });
 
   $("tr:nth-child(even) td:nth-child(even).chancy, \
@@ -478,7 +502,7 @@ function setTokens(){
   };
 // end code from CMSC 150 project
 
-function appendBoard(board, initial=false, index='', n=''){
+function appendBoard(board, initial=false, index='', n=0, interactive=false){
 
   curIndex = n;
 
@@ -490,7 +514,16 @@ function appendBoard(board, initial=false, index='', n=''){
   if(initial){
     caption = 'Initial configuration'
     tClass = 'ini';
-    table += '<div class="dl"><a class="btn btn-primary pull-right" download="solution-n-'+(n+1)+'.txt" id="downloadlink-'+n+'">Download solutions</a></div>'
+    if(interactive){
+      console.log(curIndex);
+      table += '<div class="dl">\
+      <a class="btn btn-primary" onclick="solveInteractive()">Solve</a>\
+      <a class="btn btn-primary" download="solution-n-'+(sizeN)+'.txt" id="downloadlink-'+n+'">Download solutions</a>\
+      </div>';
+    }
+    else{
+      table += '<div class="dl"><a class="btn btn-primary pull-right" download="solution-n-'+(n+1)+'.txt" id="downloadlink-'+n+'">Download solutions</a></div>';
+    }
   }
 
   table += '<div class="'+tClass+'"><table class="table table-responsive table-bordered"><caption>'+caption+'</caption><tbody>';
@@ -499,7 +532,7 @@ function appendBoard(board, initial=false, index='', n=''){
     table+= '<tr>';
     for(var j=0; j<board[i].length; j++){
       cClass = board[i][j] ? 'chancy' : '';
-      table+= '<td class="'+cClass+'">&#9;</td>';
+      table+= '<td class="'+cClass+'" id="'+i+'-'+j+'">&#9;</td>';
     }
     table+= '</tr>';
   }
@@ -507,7 +540,16 @@ function appendBoard(board, initial=false, index='', n=''){
   table+= '</tbody> </table> </div>';
 
   if(initial){
-    $('#main').html(table);
+    if(interactive){
+      interactiveMode();
+      document.getElementById('nSize').value = sizeN;
+      $('#main').append(table);
+      // $('#downloadlink-'+n).prop('disabled', true);
+      $('#nSize').focus();
+    }
+    else {
+      $('#main').html(table);
+    }
 
     // begin modified code from CMSC 191 project
       var layout = '<div class="col-md-12" id="resultHead"></div>\
@@ -521,6 +563,8 @@ function appendBoard(board, initial=false, index='', n=''){
   else {
     $('#result').append(table);
   }
+
+  setTokens();
 }
 
 function showHome(){
@@ -552,4 +596,121 @@ function showHome(){
 
 function uploadFile(){
   $('#txtFileInput').trigger('click');
+}
+
+function addEmptyNBoard(){
+  sizeN = parseInt(document.getElementById('nSize').value, 10);
+
+  puzzles = [];
+  solutions = [];
+
+  playable.arr = initBoard(sizeN);
+  playable.stack = initStack(sizeN);
+  playable.fixed = initStack(sizeN);
+  playable.hasInitialChancys = false;
+
+  appendBoard(playable.arr, true, '', 0, true);
+
+  // printBoard(playable.arr);
+
+
+  // console.log(cells);
+
+  addCellListener();
+}
+
+function addCellListener(){
+  var cells = document.getElementsByTagName('td');
+
+  for(var i=0; i<cells.length; i++){
+    selectedCellId = cells[i].id;
+    var idSplit = cells[i].id.split('-');
+    // console.log(id);
+    var row = idSplit[0];
+    var col = idSplit[1];
+
+    cells[i].addEventListener('click', function (event) {
+
+      // var id='0-0';
+
+      var idSplit = this.id.split('-');
+      var row = idSplit[0];
+      var col = idSplit[1];
+
+      if(playable.arr[row][col]){
+        playable.arr[row][col] = 0;
+        playable.stack[col] = -1;
+        playable.fixed[col] = -1;
+        $('#'+this.id).removeClass('chancy');
+        console.log('clear');
+        setTokens();
+        // console.log(1);
+      }
+      else{
+        playable.arr[row][col] = 1;
+        playable.stack[col] = row;
+        playable.fixed[col] = row;
+        $('#'+this.id).addClass('chancy');
+        console.log('put');
+        setTokens();
+        // console.log(0);
+      }
+
+      console.log(this);
+      printBoard(playable.arr);
+
+    }, false);
+  }
+}
+
+function solveInteractive(){
+  sizeN = parseInt(document.getElementById('nSize').value, 10);
+
+  puzzles = [];
+  solutions = [];
+
+  var opts = {
+    arr: boardDeepCopy(playable.arr),
+    stack: arrDeepCopy(playable.stack),
+    fixed: arrDeepCopy(playable.fixed),
+    hasInitialChancys: false
+  };
+  // opts.arr = boardDeepCopy(playable.arr);
+  console.log(opts.arr);
+  opts.stack = populateStack(playable.arr, playable.stack);
+  console.log(opts.stack);
+  opts.fixed = arrDeepCopy(opts.stack);
+  console.log(opts.fixed);
+
+  for(var i=0; !opts.hasInitialChancys && i<playable.arr.length; i++){
+    for(var j=0; !opts.hasInitialChancys && j<playable.arr[i].length; j++){
+      if(playable.arr[i][j]){
+        opts.hasInitialChancys = true;
+      }
+    }
+  }
+
+  puzzles.push(playable.arr);
+  solutions.push([]);
+
+  if(!hasConflict(opts)){   // check for conflict of initial chancy
+    solve(0, opts);         // solve here
+    displaySoln(0, true);
+  }
+}
+
+function interactiveMode(){
+  var home = '<div id="main-wrapper" class="col-md-12">\
+      <div id="main">\
+        <div class="row" style="margin-bottom: 10px;">\
+          <div class="col-md-2">\
+            <div class="input-group">\
+              <span class="input-group-addon" id="basic-addon2">N = </span>\
+              <input type="number" step="1" min="1" value="0" aria-describedby="basic-addon2" class="form-control" id="nSize" onchange="addEmptyNBoard()">\
+            </div>\
+          </div>\
+        </div>\
+      </div>\
+    </div>';
+  $('#wrapper').html(home);
 }
